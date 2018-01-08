@@ -1,0 +1,11 @@
+server:
+  port: 9995
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localHost:/graduation?useUnicode=true&characterEncoding=utf-8&useSSL=true
+    username: root
+    password: root
+liquibase:
+  change-log: classpath:db/liquibase/master.xml
