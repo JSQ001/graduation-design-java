@@ -43,6 +43,19 @@ public class UserController {
 
     private final StudentImportService studentImportService;
 
+
+    /**
+     * @apiDefine UserNotFoundError
+     *
+     * @apiError UserNotFound The id of the User was not found.
+     *
+     * @apiErrorExample Error-Response:
+     *     HTTP/1.1 404 Not Found
+     *     {
+     *       "error": "UserNotFound"
+     *     }
+     */
+
     @PostMapping("/insert")
     public ResponseEntity<User> user(@Valid @RequestBody User user){
         return  new ResponseEntity<User>(userService.insertUser(user), HttpStatus.OK);
