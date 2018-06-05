@@ -4,8 +4,24 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localHost:/graduation?useUnicode=true&characterEncoding=utf-8&useSSL=true
+    url: jdbc:mysql://localhost:3306/graduation-design?useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: root
     password: root
+  jackson:
+      serialization:
+        WRITE_DATES_AS_TIMESTAMPS: false
+      date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
 liquibase:
   change-log: classpath:db/liquibase/master.xml
+
+security:
+  oauth2:
+    resource:
+      filter-order: 3
+mybatis:
+    mapper-locations: com/jsq/mapper/*Mapper.xml
+    type-aliases-package: com.jsq.entityty
+    type-handlers-package: com.jsq.util.typeHandler
+logging:
+  level:
+   org.springframework.security: debug

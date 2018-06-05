@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2017. Shanghai Zhenhui Information Technology Co,. ltd.
-  ~ All rights are reserved.
-  -->
 
 <databaseChangeLog
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -12,37 +8,452 @@
 
     <property name="now" value="now()" dbms="mysql,h2"/>
     <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
-    <!--<changeSet id="201706051428001" author="markfred.chen">
-        <createTable tableName="bgt_scenario">
+    <changeSet id="20180109" author="jsq">
+        <createTable tableName="tb_user" remarks="用户表">
             <column name="id" type="bigint">
                 <constraints
                         nullable="false"
                         primaryKey="true"
-                        primaryKeyName="pk_atl_auth_realm_id"/>
+                        primaryKeyName="pk_Id"/>
             </column>
-            <column name="scenario_name" type="varchar(100)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="idx_uq_realm_name"/>
+            <column name="user_number" type="varchar(20)" remarks="学号/工号">
+                <constraints nullable="false" unique="true"/>
             </column>
-            <column name="scenario_code" type="varchar(100)">
+            <column name="password" type="varchar(20)" remarks="密码">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="varchar(100)">
+            <column name="nickname" type="varchar(20)" remarks="姓名">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_enabled" type="boolean">
+            <column name="gender" type="varchar(10)" remarks="性别">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_deleted" type="boolean">
+            <column name="avatar" type="varchar(255)" remarks="头像"/>
+
+            <column name="phone" type="varchar(255)" remarks="电话"/>
+            <column name="is_locked" type="boolean" remarks="是否锁定">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_date" type="timestamp">
+            <column name="is_enabled" type="boolean" remarks="是否启用">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" remarks="入学/职时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated_date" type="timestamp" remarks="最后修改日期"/>
+            <column name="last_updated_by" type="bigint" remarks="最后修改人"/>
+        </createTable>
+
+        <createTable tableName="tb_authority" remarks="权限表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="authority_name" type="varchar(255)" remarks="权限名">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="tb_user_authorities" remarks="用户权限表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="userId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authorityId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!--给用户权限表加联合唯一约束-->
+        <addUniqueConstraint tableName="tb_user_authorities" columnNames="authorityId,userId"/>
+
+        <createTable tableName="tb_department" remarks="系部表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="deptCode" type="varchar(255)" remarks="系部代码">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="deptName" type="varchar(255)" remarks="系部名称">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_date" type="timestamp" remarks="成立时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)" remarks="描述"/>
+            <column name="is_enabled" type="boolean" remarks="是否启用">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="tb_department_user" remarks="用户系部表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="departmentId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="userId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!--给用户权限表加联合唯一约束-->
+        <addUniqueConstraint tableName="tb_department_user" columnNames="departmentId,userId"/>
+
+    </changeSet>
+    <changeSet id="20180110" author="jsq">
+        <createTable tableName="oauth_client_details">
+            <column name="client_id" type="varchar(128)">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_oauth_client_id"/>
+            </column>
+            <column name="resource_ids" type="varchar(256)"/>
+            <column name="client_secret" type="varchar(256)"/>
+            <column name="scope" type="varchar(256)"/>
+            <column name="authorized_grant_types" type="varchar(256)"/>
+            <column name="web_server_redirect_uri" type="varchar(256)"/>
+            <column name="authorities" type="varchar(256)"/>
+            <column name="access_token_validity" type="INTEGER"/>
+            <column name="refresh_token_validity" type="INTEGER"/>
+            <column name="additional_information" type="varchar(4096)"/>
+            <column name="autoapprove" type="varchar(256)"/>
+        </createTable>
+
+        <createTable tableName="oauth_client_token">
+            <column name="token_id" type="VARCHAR(256)">
+            </column>
+            <column name="token" type="blob"/>
+            <column name="authentication_id" type="VARCHAR(128)">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_oauth_client_token_id"/>
+            </column>
+            <column name="user_name" type="varchar(256)"/>
+            <column name="client_id" type="varchar(256)"/>
+        </createTable>
+
+        <createTable tableName="oauth_access_token">
+            <column name="token_id" type="varchar(256)"></column>
+            <column name="token" type="blob"/>
+            <column name="authentication_id" type="VARCHAR(256)">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_oauth_access_token_id"/>
+            </column>
+            <column name="user_name" type="varchar(256)"/>
+            <column name="client_id" type="varchar(256)"/>
+            <column name="authentication" type="blob"/>
+            <column name="refresh_token" type="varchar(256)"/>
+        </createTable>
+        <createTable tableName="oauth_refresh_token">
+            <column name="token_id" type="varchar(256)"></column>
+            <column name="token" type="blob"/>
+            <column name="authentication" type="blob"></column>
+        </createTable>
+
+        <createTable tableName="oauth_code">
+            <column name="code" type="varchar(256)"></column>
+            <column name="authentication" type="blob"></column>
+        </createTable>
+        <createTable tableName="oauth_approvals">
+            <column name="userId" type="VARCHAR(256)"></column>
+            <column name="clientId" type="VARCHAR(256)"></column>
+            <column name="scope" type="VARCHAR(256)"></column>
+            <column name="status" type="VARCHAR(10)"></column>
+            <column name="expiresAt" type="TIMESTAMP">
+            </column>
+            <column name="lastModifiedAt" type="TIMESTAMP">
+            </column>
+        </createTable>
+
+        <createTable tableName="ClientDetails">
+            <column name="appId" type="VARCHAR(256)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="idx_ClientDetails"/>
+            </column>
+            <column name="resourceIds" type="VARCHAR(256)"></column>
+            <column name="appSecret" type="VARCHAR(256)"></column>
+            <column name="scope" type="VARCHAR(256)"></column>
+            <column name="grantTypes" type="VARCHAR(256)"/>
+            <column name="redirectUrl" type="VARCHAR(256)"/>
+            <column name="authorities" type="VARCHAR(256)"/>
+            <column name="access_token_validity" type="INTEGER"/>
+            <column name="refresh_token_validity" type="INTEGER"/>
+            <column name="additionalInformation" type="VARCHAR(4096)"/>
+            <column name="autoApproveScopes" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="20180430" author="jsq">
+        <createTable tableName="tb_project" remarks="科目表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="projectName" type="varchar(255)" remarks="科目名称">
+                <constraints nullable="false"/>
+            </column>
+            <column name="projectType" type="varchar(255)" remarks="科目类型">
+                <constraints nullable="false"/>
+            </column>
+            <column name="release_time" type="timestamp" remarks="发布日期">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="tb_user_project" remarks="用户科目表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="userId" type="bigint" remarks="用户id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="projectId" type="bigint" remarks="科目id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_score" type="Double" remarks="科目成绩"/>
+        </createTable>
+        <addUniqueConstraint tableName="tb_user_project" columnNames="projectId,userId"/>
+    </changeSet>
+
+    <!--创建班级表-->
+    <changeSet id="20180503" author="jsq">
+        <createTable tableName="tb_class">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="grade" type="varchar(255)" remarks="年级">
+                <constraints nullable="false"/>
+            </column>
+            <column name="className" type="varchar(255)" remarks="班级名称">
+                <constraints nullable="false"/>
+            </column>
+            <column name="classCount" type="bigint" remarks="班级人数"/>
+            <column name="is_enabled" type="boolean" remarks="是否启用" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="tb_class" columnNames="grade,className" constraintName="grade_className_pk"/>
+        
+        <!--班级系部表-->
+        <createTable tableName="tb_dept_class">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="classId" type="bigint" remarks="班级id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deptId" type="bigint" remarks="系部id">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="tb_dept_class" columnNames="classId,deptId" constraintName="dept_class_pk"/>
+
+        <createTable tableName="tb_user_class">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="classId" type="bigint" remarks="班级id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="userId" type="bigint" remarks="用户id">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="tb_user_class" columnNames="classId,userId" constraintName="user_class_pk"/>
+    </changeSet>
+
+    <changeSet id="20180505" author="jsq">
+        <createTable tableName="tb_course">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="courseNumber" type="varchar(255)" remarks="课程号">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="courseType" type="varchar(255)" remarks="课程类型">
+                <constraints nullable="false"/>
+            </column>
+            <column name="courseName" type="varchar(255)" remarks="课程名称">
+                <constraints nullable="false"/>
+            </column>
+            <column name="teacherId" type="bigint" remarks="讲师">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="bigint" remarks="状态">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2018050517" author="jsq">
+        <createTable tableName="tb_title_head">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="titleNumber" type="varchar(255)" remarks="试题号">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="titleName" type="varchar(255)" remarks="题目名称">
+                <constraints nullable="false"/>
+            </column>
+            <column name="titleType" type="varchar(255)" remarks="题目类型">
+                <constraints nullable="false"/>
+            </column>
+            <column name="courseId" type="bigint" remarks="课程id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="teacherId" type="bigint" remarks="创建人">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(255)" remarks="试题文件url">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="enabled" type="bigint" remarks="状态">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="201711160953001" author="jsq">
+        <createTable tableName="tb_batch_transaction_log">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_batch_transaction_log"/>
+            </column>
+            <column name="operation" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_uuid" type="varchar(36)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="idx_transaction_uuid"/>
+            </column>
+            <column name="total_entities" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="success_entities" type="int"/>
+            <column name="failure_entities" type="int"/>
+            <column name="start_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="finish_time" type="timestamp"/>
+            <column name="status" type="int">
                 <constraints nullable="false"/>
             </column>
             <column name="created_by" type="bigint"/>
-            <column name="last_updated_date" type="timestamp"/>
-            <column name="last_updated_by" type="bigint"/>
+            <column name="errors" type="LONGTEXT"/>
+            <column name="error_detail" type="LONGTEXT" remarks="导入错误记录详情"/>
+            <column name="created_date" type="timestamp" remarks="创建时间"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="201805010" author="jsq">
+        <createTable tableName="tb_major" remarks="专业表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="major_name" type="varchar(255)" remarks="专业名称">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="deptId" type="bigint" remarks="系部id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" remarks="创建时间"/>
+        </createTable>
+        <createTable tableName="tb_major_class" remarks="班级专业表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="majorId" type="bigint" remarks="专业id">
+                <constraints nullable="false" />
+            </column>
+            <column name="classId" type="bigint" remarks="班级id">
+                <constraints nullable="false" />
+            </column>
         </createTable>
 
-    </changeSet>-->
+    </changeSet>
+
+    <changeSet id="20180514" author="jsq">
+        <createTable tableName="tb_user_title_score" remarks="学生成绩表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="userNumber" type="varchar(255)" remarks="学号">
+                <constraints nullable="false" />
+            </column>
+            <column name="titleHId" type="bigint" remarks="题目id">
+                <constraints nullable="false" />
+            </column>
+            <column name="score" type="varchar(255)" remarks="成绩">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="tb_user_title_score" columnNames="userNumber,titleHId"/>
+    </changeSet>
+
+    <changeSet id="20180518" author="sjq">
+        <createTable tableName="tb_course_class" remarks="课程班级表">
+            <column name="id" type="bigint">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_Id"/>
+            </column>
+            <column name="classId" type="bigint" remarks="班级id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="courseId" type="bigint" remarks="课程id">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <addUniqueConstraint tableName="tb_course_class" columnNames="classId,courseId"/>
+    </changeSet>
+
+
+    <!--初始化数据-->
+    <changeSet id="201805021000" author="jsq">
+        <sqlFile path="classpath:db/liquibase/init.sql" encoding="utf-8"/>
+    </changeSet>
 
 </databaseChangeLog>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jsq.mapper.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.jsq.entity.User">
+        <id column="id" property="id" />
+        <result column="user_number" property="userNumber" />
+        <result column="password" property="password" />
+        <result column="gender" property="gender" />
+        <result column="isLocked" property="isLocked" />
+        <result column="is_enabled" property="isEnabled" />
+        <result column="created_date" property="createdDate" />
+        <result column="last_updated_date" property="lastUpdatedDate" />
+        <result column="last_updated_by" property="lastUpdatedBy" />
+    </resultMap>
+    <select id="selectUserByUserNum" resultMap="BaseResultMap">
+        SELECT *
+        FROM
+        tb_user user
+        <where>
+            user_number = ${userNumber}
+        </where>
+    </select>
+</mapper>
